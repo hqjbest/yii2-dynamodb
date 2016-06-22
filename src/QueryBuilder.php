@@ -491,7 +491,7 @@ class QueryBuilder extends Object
         // string, and single boolean
         foreach ($params as $i => $value) {
             if (is_int($value)) {
-                $params[$i] = ['N' => $value];
+                $params[$i] = ['N' => strval($value)];
             } elseif (is_string($value)) {
                 $params[$i] = ['S' => $value];
             } elseif (is_bool($value)) {
