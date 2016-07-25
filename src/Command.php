@@ -139,7 +139,7 @@ class Command extends Object
             if ($exc->getAwsErrorCode() == 'ResourceNotFoundException') {
                 return false;
             } else {
-                throw new $exc;
+                throw $exc;
             }
         }
     }
