@@ -93,7 +93,7 @@ class QueryBuilder extends Object
                         || $keyCondition != 1 || !$supportBatchGetItem) {
                 // WARNING AWS SDK not support operator beside '=' if use Query method
                 // TODO Slice where clause query
-                if (!empty($query->orderBy) && ($keyCondition == 1 || $keyCondition == 2)
+                if ((!empty($query->orderBy)||!empty($query->where)) && ($keyCondition == 1 || $keyCondition == 2)
                         && $supportBatchGetItem) {
                     $query->using = Query::USING_QUERY;
                 } else {
