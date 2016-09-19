@@ -89,12 +89,12 @@ class QueryBuilder extends Object
             $keyCondition = $this->isConditionMatchKeySchema($query);
             $supportBatchGetItem = $this->isOperatorSupportBatchGetItem($query->where);
             if (empty($query->where) || !empty($query->indexBy) || !empty($query->limit)
-                        || !empty($query->offset) || !empty($query->orderBy)
-                        || $keyCondition != 1 || !$supportBatchGetItem) {
+                || !empty($query->offset) || !empty($query->orderBy)
+                || $keyCondition != 1 || !$supportBatchGetItem) {
                 // WARNING AWS SDK not support operator beside '=' if use Query method
                 // TODO Slice where clause query
-                if ((!empty($query->orderBy)||!empty($query->where)) && ($keyCondition == 1 || $keyCondition == 2)
-                        && $supportBatchGetItem) {
+                if (!empty($query->orderBy) && ($keyCondition == 1 || $keyCondition == 2)
+                    && $supportBatchGetItem) {
                     $query->using = Query::USING_QUERY;
                 } else {
                     $query->using = Query::USING_SCAN;
@@ -390,10 +390,10 @@ class QueryBuilder extends Object
     {
         if (!empty($query->select)) {
             return is_array($query->select) ? [
-                    'ProjectionExpression' => implode(', ', $query->select)
-                ] : [
-                    'ProjectionExpression' => $query->select
-                ];
+                'ProjectionExpression' => implode(', ', $query->select)
+            ] : [
+                'ProjectionExpression' => $query->select
+            ];
         } else {
             return [];
         }
@@ -474,9 +474,9 @@ class QueryBuilder extends Object
         $where = $this->buildCondition($condition, $params);
 
         return $where === '' ? [] : [
-                'FilterExpression' => $where,
-                'ExpressionAttributeValues' => $this->paramToExpressionAttributeValues($params),
-            ];
+            'FilterExpression' => $where,
+            'ExpressionAttributeValues' => $this->paramToExpressionAttributeValues($params),
+        ];
     }
 
     /**
@@ -508,7 +508,11 @@ class QueryBuilder extends Object
                 } elseif (is_int($subValue)) {
                     $params[$i] = ['NS' => $value];
                 } elseif (is_string($subValue)) {
-                    $params[$i] = ['SS' => $value];
+                    $params[$i] = [];
+                    foreach ($value as $subString)
+                    {
+                        $params[$i]['L'][] = ['S' => $subString];
+                    }
                 } else {
                     $params[$i] = ['BS' => $value];
                 }
