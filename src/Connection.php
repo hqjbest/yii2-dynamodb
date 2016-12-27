@@ -8,6 +8,7 @@ namespace UrbanIndo\Yii2\DynamoDb;
 
 use Yii;
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\Credentials\CredentialProvider;
 
 /**
  * Connection wraps DynamoDB connection for Aws PHP SDK.
