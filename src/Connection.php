@@ -29,7 +29,7 @@ class Connection extends \yii\base\Component
      * @var DynamoDbClient
      */
     protected $_client;
-    
+
     /**
      * The query builder.
      * @var QueryBuilder
@@ -43,6 +43,13 @@ class Connection extends \yii\base\Component
     public function init()
     {
         parent::init();
+
+        if (empty($this->config['credentials'])) { //using IAM Role
+            $provider = CredentialProvider::instanceProfile();
+            $memoizedProvider = CredentialProvider::memoize($provider);          // Be sure to memoize the credentials
+            $this->config['credentials'] = $memoizedProvider;
+        }
+
         $this->_client = new DynamoDbClient($this->config);
     }
 
