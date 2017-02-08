@@ -8,7 +8,8 @@ namespace UrbanIndo\Yii2\DynamoDb;
 
 use Yii;
 use Aws\DynamoDb\DynamoDbClient;
-use Aws\Credentials\CredentialProvider;
+use Aws\DoctrineCacheAdapter;
+use Doctrine\Common\Cache\ApcuCache;
 
 /**
  * Connection wraps DynamoDB connection for Aws PHP SDK.
@@ -46,9 +47,7 @@ class Connection extends \yii\base\Component
         parent::init();
 
         if (empty($this->config['credentials'])) { //using IAM Role
-            $provider = CredentialProvider::instanceProfile();
-            $memoizedProvider = CredentialProvider::memoize($provider);          // Be sure to memoize the credentials
-            $this->config['credentials'] = $memoizedProvider;
+            $this->config['credentials'] = new DoctrineCacheAdapter(new ApcuCache);
         }
 
         $this->_client = new DynamoDbClient($this->config);
